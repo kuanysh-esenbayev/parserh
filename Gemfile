@@ -27,6 +27,7 @@ gem 'bson_ext'
 
 gem 'stuff-classifier', github: 'kunya2415/stuff-classifier'
 gem 'ruby-stemmer'
+gem 'ankusa'
 
 gem 'nokogiri'
 gem 'binding_of_caller'

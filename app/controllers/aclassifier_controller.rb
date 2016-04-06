@@ -1,23 +1,34 @@
-class ClassifierController < ApplicationController
+class AclassifierController < ApplicationController
 
-
+	require 'ankusa'
+	require 'ankusa/file_system_storage'
 	require 'csv'
 
 	def classifier
-		store = StuffClassifier::FileStorage.new(Rails.root.join('tmp/result2'))
-		cls = Classifier.new("Post classification 2", language: "ru", :storage => store)
-		# cls = StuffClassifier::Bayes.new("Post classification", language: "ru")
-		# cls = train(cls)
-		# raise
-		# cls.train_data
-		# Rails.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! TRAIN FINISHED !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-		test(cls)
-	end
-
-	def test(cls)
 		
-		string, tag = ""
-		res = []
+		path = Rails.root.join('tmp/result_ankusa')
+		storage = Ankusa::FileSystemStorage.new path
+		# c = Ankusa::KLDivergenceClassifier.new storage
+		c = Ankusa::NaiveBayesClassifier.new storage
+
+
+		strings = tags = []
+		i = 0
+		arr_arrs = CSV.read(Rails.root.join('tmp/dataset.csv'))
+		arr_arrs.each do |row|
+			tags = row[1].split(", ")
+			tags.each do |st|
+				c.train(st, row[0])
+			end
+			Rails.logger.info " !!!!!!!!!!!!!!!!!!!!!!!!!! ROW number =>>>>>>>>>>>>>>>>>>>#{i}"
+			i = i + 1			
+		end
+
+		storage.save
+
+		
+
+
 		arr_arrs = CSV.read(Rails.root.join('tmp/dataset_rest.csv'))
 
 		# [1..arr_arrs.count-1]
@@ -27,10 +38,12 @@ class ClassifierController < ApplicationController
 		# 	Rails.logger.info "!!!!!!!!!! INDEX #{index}"
 		# end
 
+		res = []
 		arr_arrs.each_with_index do |row, index|
 			Rails.logger.info "~!~!~!~!!!!!!!!!!!!!!!!~~~~~~~~~~~~~ STARTING TO CLASSIFY ~~~~~~~~~~~~~~~~~~!!!!!!!!!!!!!!!!~!~!~!~!~!~!"
-			text = row[0][500..1000] + ". " + row[0][row[0].length-500..row[0].length]
-			res << cls.classify(text)
+			text = row[0]
+			res << c.classify(text)
+			# puts c.log_likelihoods text
 			Rails.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! RES contains #{res.count} !!!!!!!!! LAST TAG #{res.last}"
 		end
 		# CSV.foreach(Rails.root.join('tmp/dataset_rest.csv')) do |row|
@@ -47,13 +60,18 @@ class ClassifierController < ApplicationController
 		arr_arrs.each do |row|
 			tags = row[1].split(", ")
 			res.each do |r|
-				res1 << analyze(r, tags)
+				res1 << analyze(r.to_s, tags)
 			end
 		end
 		Rails.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  FINISHED !!!!!!!!!!!!!!!!!!!!!"
 
 		percentage(res1)
 		raise
+	
+
+
+
+
 	end
 
 	def analyze(res, tags)
@@ -64,15 +82,8 @@ class ClassifierController < ApplicationController
 		[(arr.count(true).to_f/arr.count)*100 ,(arr.count(false).to_f/arr.count)*100]
 	end
 
-	def train(cls)
-		# string, tag = ""
-		# CSV.foreach(Rails.root.join('tmp/dataset.csv')) do |row|
-		# 	tags = row[1].split(", ")
-		# 	tags.each do |st|
-		# 		cls.train(st, row[0][0..(row[0].length*0.8).to_i])
-		# 	end
-		# end
-	end
 	
+
+
 
 end

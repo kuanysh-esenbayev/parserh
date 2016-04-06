@@ -55,6 +55,8 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
+    ankusa (0.1.1)
+      fast-stemmer (>= 1.0.0)
     arel (6.0.3)
     better_errors (2.1.1)
       coderay (>= 1.0.0)
@@ -78,6 +80,7 @@ GEM
     debug_inspector (0.0.2)
     erubis (2.7.0)
     execjs (2.6.0)
+    fast-stemmer (1.0.2)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     i18n (0.7.0)
@@ -174,6 +177,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  ankusa
   better_errors
   binding_of_caller
   bson_ext
