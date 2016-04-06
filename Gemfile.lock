@@ -1,4 +1,13 @@
 GIT
+  remote: git://github.com/kunya2415/stuff-classifier.git
+  revision: 6e3d32c507112ff17be512edb30b8f2db91baa85
+  specs:
+    stuff-classifier (0.5)
+      redis
+      ruby-stemmer
+      sequel
+
+GIT
   remote: git://github.com/mongoid/mongoid.git
   revision: 63ece9973709a837a1817824d202b367db3e3688
   specs:
@@ -125,6 +134,8 @@ GEM
     rake (11.1.2)
     rdoc (4.2.2)
       json (~> 1.4)
+    redis (3.2.2)
+    ruby-stemmer (0.9.6)
     sass (3.4.22)
     sass-rails (5.0.4)
       railties (>= 4.0.0, < 5.0)
@@ -135,6 +146,7 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    sequel (4.33.0)
     spring (1.6.4)
     sprockets (3.5.2)
       concurrent-ruby (~> 1.0)
@@ -172,12 +184,14 @@ DEPENDENCIES
   mongoid!
   nokogiri
   rails (= 4.2.3)
+  ruby-stemmer
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring
+  stuff-classifier!
   turbolinks
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.10.5
+   1.11.2

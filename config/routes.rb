@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   get 'parse_site', to: "parser#parse_site", as: "start_parser"
 
+  get 'classifier_text', to: "classifier#classifier"
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

@@ -12,7 +12,7 @@ class ParserController < ApplicationController
 		res =  parse_with_thread
 
 
-		CSV.open("tmp/dataset.csv", "wb") do |csv|
+		CSV.open("tmp/dataset_rest.csv", "wb") do |csv|
 			res.each do |pag|
 				pag.each do |site|
 					csv << site
@@ -84,7 +84,7 @@ class ParserController < ApplicationController
 
     sources = []
     statuses = []
-    (1..pagination.to_i).each do |i| 
+    (97..99).each do |i| 
       sources << "#{URL}page#{i}/"
       statuses << false
     end
