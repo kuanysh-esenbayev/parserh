@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   # root 'welcome#index'
 
   get 'parse_site', to: "parser#parse_site", as: "start_parser"
+  get 'parse_site_tengri', to: "tengri_parser#parse_site_tengri", as: "start_parser_tengri"
 
   get 'classifier_text', to: "classifier#classifier"
   get 'classifier_text_ankusa', to: "aclassifier#classifier"
