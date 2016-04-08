@@ -8,8 +8,6 @@ class TengriParserController < ApplicationController
 	ALPHABET = ("а".."я").to_a + ("a".."z").to_a
 
 	def parse_site_tengri
-		
-
 
 		res = []
 		ALPHABET.each do |ch|
@@ -46,14 +44,17 @@ class TengriParserController < ApplicationController
 
   		Rails.logger.info "!!!!!!!!!!!!!!!!!~~~~~~~~~~    Page #{posts}      ~~~~~~~~~!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 			a = rand(5)
-  		posts_page = Nokogiri::HTML(open(tmp_url, 'User-Agent' => 'chrome'))
-  		posts_page.css('.search-result-name a').each do |post_link|
-  			a = rand(5)
-  			link = post_link.attr("href")
-				i = i + 1
-				Rails.logger.info "!!!!!!!!!!!!!!!!!! POST NUMBER ============>>>>>>>>>>>> #{i}"
-  			post_list << post_page(link)
-  			sleep(a)
+        begin
+    		  posts_page = Nokogiri::HTML(open(tmp_url, 'User-Agent' => 'chrome'))
+          
+          posts_page.css('.search-result-name a').each do |post_link|
+          a = rand(5)
+          link = post_link.attr("href")
+          i = i + 1
+          Rails.logger.info "!!!!!!!!!!!!!!!!!! POST NUMBER ============>>>>>>>>>>>> #{i}"
+          post_list << post_page(link)
+          sleep(a)
+        end
   		end
   			sleep(a)
   			i = 0
@@ -68,7 +69,12 @@ class TengriParserController < ApplicationController
   	url = URL + source + "/"
   	url = URI.encode(url)
 
-  	post = Nokogiri::HTML(open(url,'User-Agent' => 'chrome'))
+    begin
+  	 post = Nokogiri::HTML(open(url,'User-Agent' => 'chrome')) 
+    rescue 
+      Rails.logger.info "!!!!+++++++++++++++++++++++++     Parsing failed     +++++++++++++++++++++++++++++++!!!!!"
+      return [nil, nil]
+    end
 
     Rails.logger.info "!!==========================================> Parsing: #{url} =======================================!!"
     content = post.css(".sharedText").text
@@ -83,27 +89,30 @@ class TengriParserController < ApplicationController
 	def parse_with_thread_tengri(ch)
 
 		url = URL + "tags/" + ch+"/"
-
-    page = Nokogiri::HTML(open(URI.encode(url), 'User-Agent' => 'chrome'))
-    link_tags = page.css(".tags-block .tags li")
-    
-
-    links = []
-
-    link_tags.each do |lt|
-    	tmp = lt.css("a").attr("href").text
-    	text = lt.css("a").text
-			links << {
-				url: URI.encode(tmp),
-				text: text
-			} 
-    end
-
     posts = []
 
-    links.each do |pages|
-    	Rails.logger.info "!!!!!!!!!!!!!!         TAG =>>>>>>> #{pages[:text]}              !!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    	posts << handler_tengri(pages[:url])
+    begin
+      page = Nokogiri::HTML(open(URI.encode(url), 'User-Agent' => 'chrome'))
+       
+      link_tags = page.css(".tags-block .tags li")
+      
+
+      links = []
+
+      link_tags.each do |lt|
+        tmp = lt.css("a").attr("href").text
+        text = lt.css("a").text
+        links << {
+          url: URI.encode(tmp),
+          text: text
+        } 
+      end
+
+
+      links.each do |pages|
+        Rails.logger.info "!!!!!!!!!!!!!!         TAG =>>>>>>> #{pages[:text]}              !!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        posts << handler_tengri(pages[:url])
+      end
     end
 
     posts   
