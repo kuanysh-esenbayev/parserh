@@ -32,7 +32,13 @@ class TengriParserController < ApplicationController
   def handler_tengri(source)
 
   	url = URL + source + "/"
-    page = Nokogiri::HTML(open(url, 'User-Agent' => 'chrome'))
+    begin
+      page = Nokogiri::HTML(open(url, 'User-Agent' => 'chrome'))
+    rescue
+      Rails.logger.info "!!!!+++++++++++++++++++++++++     Parsing failed     +++++++++++++++++++++++++++++++!!!!!"
+      return [[nil, nil]]
+    end
+
 
   	pagination_count =  page.css(".pager a").count
   	
@@ -82,6 +88,12 @@ class TengriParserController < ApplicationController
 
     tags = post.css(".tag-list").text
     tags = normalize_content(tags)
+
+    tmp = Post.where(url: url, text: content, tag: tags).first
+    if tmp
+    else
+      Post.create(url: url, text: content, tag: tags)
+    end
 
     [content, tags]
   end
